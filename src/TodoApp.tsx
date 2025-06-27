@@ -35,6 +35,10 @@ export const TodoApp: React.FC = () => {
     setTodos(todos.filter((todo: Todo) => todo.id !== id));
   };
 
+  const clearCompleted = () => {
+    setTodos(todos.filter((todo: Todo) => !todo.completed));
+  };
+
   return (
     <View>
       <TextInput
@@ -43,7 +47,7 @@ export const TodoApp: React.FC = () => {
         onChangeText={setText}
         onSubmitEditing={handleAdd}
       />
-      {todos.map((todo) => (
+      {todos.map((todo: Todo) => (
         <View key={todo.id} style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => toggleTodo(todo.id)}>
             <Text
@@ -59,6 +63,9 @@ export const TodoApp: React.FC = () => {
           </TouchableOpacity>
         </View>
       ))}
+      <TouchableOpacity onPress={clearCompleted}>
+        <Text>Clear Completed</Text>
+      </TouchableOpacity>
     </View>
   );
 };
