@@ -47,6 +47,10 @@ export const TodoApp: React.FC = () => {
     setTodos(todos.filter((todo: Todo) => !todo.completed));
   };
 
+  const completeAll = () => {
+    setTodos(todos.map((todo: Todo) => ({ ...todo, completed: true })));
+  };
+
   const startEdit = (id: string) => {
     const todo = todos.find((t) => t.id === id);
     if (!todo) return;
@@ -124,6 +128,9 @@ export const TodoApp: React.FC = () => {
           )}
         </View>
       ))}
+      <TouchableOpacity onPress={completeAll}>
+        <Text>Complete All</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={clearCompleted}>
         <Text>Clear Completed</Text>
       </TouchableOpacity>
