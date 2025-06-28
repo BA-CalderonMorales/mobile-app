@@ -156,4 +156,25 @@ describe('TodoApp', () => {
 
     expect(getByText('1 item left')).toBeTruthy();
   });
+
+  it('marks all todos as completed', () => {
+    const { getByPlaceholderText, getByText } = render(<TodoApp />);
+
+    const input = getByPlaceholderText('Add new todo');
+    fireEvent.changeText(input, 'Task 1');
+    fireEvent(input, 'submitEditing');
+
+    fireEvent.changeText(input, 'Task 2');
+    fireEvent(input, 'submitEditing');
+
+    const completeAllButton = getByText('Complete All');
+    fireEvent.press(completeAllButton);
+
+    const item1 = getByText('Task 1');
+    const item2 = getByText('Task 2');
+
+    expect(item1.props.style.textDecorationLine).toBe('line-through');
+    expect(item2.props.style.textDecorationLine).toBe('line-through');
+    expect(getByText('0 items left')).toBeTruthy();
+  });
 });
