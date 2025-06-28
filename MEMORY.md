@@ -1069,6 +1069,16 @@ const applyDiscount = (price: number, discountRate: number): number => {
 - PRs should be focused on a single feature or fix
 - Include description of the behavior change, not implementation details
 
+### Pre-commit Hooks
+
+Use the included `.pre-commit-config.yaml` to run `npm test` and commitlint on every commit. Install hooks with:
+
+```bash
+npx pre-commit install
+```
+
+Commits will be blocked if tests fail or commit messages do not follow the conventional format.
+
 ## Working with Claude
 
 ### Expectations
