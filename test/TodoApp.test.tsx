@@ -121,7 +121,7 @@ describe('TodoApp', () => {
     const mockAsyncStorage = require('@react-native-async-storage/async-storage');
     mockAsyncStorage.getItem.mockResolvedValueOnce(null);
 
-    const { getByPlaceholderText, getByText, findByText, unmount, rerender } = render(
+    const { getByPlaceholderText, findByText, unmount, rerender } = render(
       <TodoApp />
     );
 
