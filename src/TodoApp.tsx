@@ -16,6 +16,8 @@ const createTodo = (text: string): Todo => ({
 export const TodoApp: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [text, setText] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
 
   const handleAdd = () => {
     if (text.trim().length === 0) return;
@@ -39,6 +41,24 @@ export const TodoApp: React.FC = () => {
     setTodos(todos.filter((todo: Todo) => !todo.completed));
   };
 
+  const startEdit = (id: string) => {
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) return;
+    setEditingId(id);
+    setEditText(todo.text);
+  };
+
+  const saveEdit = () => {
+    if (!editingId) return;
+    setTodos(
+      todos.map((todo: Todo) =>
+        todo.id === editingId ? { ...todo, text: editText } : todo
+      )
+    );
+    setEditingId(null);
+    setEditText('');
+  };
+
   return (
     <View>
       <TextInput
@@ -49,18 +69,36 @@ export const TodoApp: React.FC = () => {
       />
       {todos.map((todo: Todo) => (
         <View key={todo.id} style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => toggleTodo(todo.id)}>
-            <Text
-              style={{
-                textDecorationLine: todo.completed ? 'line-through' : 'none',
-              }}
-            >
-              {todo.text}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => removeTodo(todo.id)}>
-            <Text>Delete</Text>
-          </TouchableOpacity>
+          {editingId === todo.id ? (
+            <>
+              <TextInput
+                value={editText}
+                onChangeText={setEditText}
+                onSubmitEditing={saveEdit}
+              />
+              <TouchableOpacity onPress={saveEdit}>
+                <Text>Save</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <TouchableOpacity onPress={() => toggleTodo(todo.id)}>
+                <Text
+                  style={{
+                    textDecorationLine: todo.completed ? 'line-through' : 'none',
+                  }}
+                >
+                  {todo.text}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => removeTodo(todo.id)}>
+                <Text>Delete</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => startEdit(todo.id)}>
+                <Text>Edit</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       ))}
       <TouchableOpacity onPress={clearCompleted}>

@@ -58,4 +58,25 @@ describe('TodoApp', () => {
     expect(queryByText('Task 1')).toBeNull();
     expect(getByText('Task 2')).toBeTruthy();
   });
+
+  it('edits an existing todo item', () => {
+    const { getByPlaceholderText, getByText, getByDisplayValue, queryByText } =
+      render(<TodoApp />);
+
+    const input = getByPlaceholderText('Add new todo');
+    fireEvent.changeText(input, 'Initial');
+    fireEvent(input, 'submitEditing');
+
+    const editButton = getByText('Edit');
+    fireEvent.press(editButton);
+
+    const editInput = getByDisplayValue('Initial');
+    fireEvent.changeText(editInput, 'Updated');
+
+    const saveButton = getByText('Save');
+    fireEvent.press(saveButton);
+
+    expect(getByText('Updated')).toBeTruthy();
+    expect(queryByText('Initial')).toBeNull();
+  });
 });
