@@ -127,6 +127,10 @@ export const TodoApp: React.FC = () => {
       <TouchableOpacity onPress={clearCompleted}>
         <Text>Clear Completed</Text>
       </TouchableOpacity>
+      <Text testID="todo-count">
+        {todos.filter((t) => !t.completed).length}{' '}
+        {todos.filter((t) => !t.completed).length === 1 ? 'item' : 'items'} left
+      </Text>
     </View>
   );
 };
