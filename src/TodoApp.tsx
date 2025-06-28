@@ -47,6 +47,10 @@ export const TodoApp: React.FC = () => {
     setTodos(todos.filter((todo: Todo) => !todo.completed));
   };
 
+  const clearAll = () => {
+    setTodos([]);
+  };
+
   const completeAll = () => {
     setTodos(todos.map((todo: Todo) => ({ ...todo, completed: true })));
   };
@@ -133,6 +137,9 @@ export const TodoApp: React.FC = () => {
       </TouchableOpacity>
       <TouchableOpacity onPress={clearCompleted}>
         <Text>Clear Completed</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={clearAll}>
+        <Text>Clear All</Text>
       </TouchableOpacity>
       <Text testID="todo-count">
         {todos.filter((t) => !t.completed).length}{' '}

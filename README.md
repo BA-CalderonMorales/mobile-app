@@ -10,6 +10,7 @@ Todos are saved locally using `AsyncStorage` so they persist between sessions.
 - Persist todos locally between sessions
 - **New:** shows the count of active todos remaining
 - **New:** mark all todos as completed with one tap
+- **New:** clear all todos at once
 
 ## Scripts
 
