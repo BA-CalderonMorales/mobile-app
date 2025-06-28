@@ -3,6 +3,13 @@
 This is a simple React Native todo application used for TDD demonstrations.
 Todos are saved locally using `AsyncStorage` so they persist between sessions.
 
+## Features
+
+- Add, edit and delete todo items
+- Filter todos by status (all, active, completed)
+- Persist todos locally between sessions
+- **New:** shows the count of active todos remaining
+
 ## Scripts
 
 - `npm ci` - install dependencies

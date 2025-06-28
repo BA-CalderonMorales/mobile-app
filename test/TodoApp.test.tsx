@@ -138,4 +138,22 @@ describe('TodoApp', () => {
 
     expect(await findByTextAgain('Persisted')).toBeTruthy();
   });
+
+  it('shows the count of active todos', () => {
+    const { getByPlaceholderText, getByText } = render(<TodoApp />);
+
+    const input = getByPlaceholderText('Add new todo');
+    fireEvent.changeText(input, 'Task 1');
+    fireEvent(input, 'submitEditing');
+
+    fireEvent.changeText(input, 'Task 2');
+    fireEvent(input, 'submitEditing');
+
+    expect(getByText('2 items left')).toBeTruthy();
+
+    const item1 = getByText('Task 1');
+    fireEvent.press(item1);
+
+    expect(getByText('1 item left')).toBeTruthy();
+  });
 });
