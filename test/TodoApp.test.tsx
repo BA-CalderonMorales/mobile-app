@@ -117,11 +117,10 @@ describe('TodoApp', () => {
   });
 
   it('persists todos between sessions', async () => {
-    jest.resetModules();
     const mockAsyncStorage = require('@react-native-async-storage/async-storage');
     mockAsyncStorage.getItem.mockResolvedValueOnce(null);
 
-    const { getByPlaceholderText, findByText, unmount, rerender } = render(
+    const { getByPlaceholderText, unmount } = render(
       <TodoApp />
     );
 
@@ -135,8 +134,8 @@ describe('TodoApp', () => {
     mockAsyncStorage.getItem.mockResolvedValueOnce(
       JSON.stringify([{ id: '1', text: 'Persisted', completed: false }])
     );
-    rerender(<TodoApp />);
+    const { findByText: findByTextAgain } = render(<TodoApp />);
 
-    expect(await findByText('Persisted')).toBeTruthy();
+    expect(await findByTextAgain('Persisted')).toBeTruthy();
   });
 });
