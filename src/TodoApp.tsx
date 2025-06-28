@@ -18,6 +18,7 @@ export const TodoApp: React.FC = () => {
   const [text, setText] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
 
   const handleAdd = () => {
     if (text.trim().length === 0) return;
@@ -59,6 +60,12 @@ export const TodoApp: React.FC = () => {
     setEditText('');
   };
 
+  const filteredTodos = todos.filter((todo: Todo) => {
+    if (filter === 'active') return !todo.completed;
+    if (filter === 'completed') return todo.completed;
+    return true;
+  });
+
   return (
     <View>
       <TextInput
@@ -67,7 +74,18 @@ export const TodoApp: React.FC = () => {
         onChangeText={setText}
         onSubmitEditing={handleAdd}
       />
-      {todos.map((todo: Todo) => (
+      <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+        <TouchableOpacity onPress={() => setFilter('all')}>
+          <Text>All</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setFilter('active')}>
+          <Text>Active</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setFilter('completed')}>
+          <Text>Completed</Text>
+        </TouchableOpacity>
+      </View>
+      {filteredTodos.map((todo: Todo) => (
         <View key={todo.id} style={{ flexDirection: 'row', alignItems: 'center' }}>
           {editingId === todo.id ? (
             <>
