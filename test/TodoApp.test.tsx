@@ -38,4 +38,24 @@ describe('TodoApp', () => {
 
     expect(queryByText('Learn TDD')).toBeNull();
   });
+
+  it('clears completed todos', () => {
+    const { getByPlaceholderText, getByText, queryByText } = render(<TodoApp />);
+
+    const input = getByPlaceholderText('Add new todo');
+    fireEvent.changeText(input, 'Task 1');
+    fireEvent(input, 'submitEditing');
+
+    fireEvent.changeText(input, 'Task 2');
+    fireEvent(input, 'submitEditing');
+
+    const item1 = getByText('Task 1');
+    fireEvent.press(item1);
+
+    const clearButton = getByText('Clear Completed');
+    fireEvent.press(clearButton);
+
+    expect(queryByText('Task 1')).toBeNull();
+    expect(getByText('Task 2')).toBeTruthy();
+  });
 });
