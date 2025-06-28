@@ -1319,6 +1319,17 @@ const processOrder = (order: Order) => {
 };
 ```
 
+## Pre-commit Hooks
+
+This project uses [pre-commit](https://pre-commit.com/) to automatically run
+checks before each commit:
+
+- `npm test` ensures the test suite passes.
+- `commitlint` enforces Conventional Commit messages.
+
+Install the hooks with `pre-commit install` after cloning and run
+`pre-commit run --all-files` to invoke them manually.
+
 ## Resources and References
 
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
