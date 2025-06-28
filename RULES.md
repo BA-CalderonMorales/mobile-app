@@ -1,36 +1,30 @@
-# Project Development Rules
+# Repository Workflow Rules
 
-This document defines the conventions for commits, pull requests, and CI within this repository. These rules ensure that both local development and automated pipelines remain consistent.
+These rules keep development consistent across the project. The document is intentionally brief so it can be referenced often.
 
-## Local commands
+## General Principles
 
-All feature development and validation should use the following npm scripts:
+- Follow Test-Driven Development. Write tests before production code and keep changes small.
+- Use strict TypeScript and prefer immutable patterns.
+- When looking for solutions, consult **context7** and the guidance in **MEMORY.md**. Do not copy text from MEMORY.md into this file.
+
+## Local Workflow
+
+Use these npm scripts during feature work:
 
 - `npm ci` – install dependencies
 - `npm start` – run the Metro bundler
-- `npm run ios` – build and run the iOS app
-- `npm run android` – build and run the Android app
-- `npm test` – execute the full test suite
-- `npm run typecheck` – run TypeScript in strict mode
-- `npm run build` – invoke Fastlane to create release builds for iOS and Android
+- `npm run ios` – run the iOS app
+- `npm run android` – run the Android app
+- `npm test` – run the full test suite
+- `npm run typecheck` – run TypeScript checks
+- `npm run build` – build release artifacts with Fastlane
 
-Every change should be validated locally using `npm ci`, `npm test`, `npm run typecheck`, and `npm run build`. CI expects these commands to succeed without additional setup.
+Run `npm ci`, `npm test`, `npm run typecheck`, and `npm run build` before pushing changes. CI uses the same commands.
 
-## Pull request titles
+## Commit Standards
 
-Use the following prefixes so reviewers know the purpose and target branch of a pull request:
-
-- **Feature:** … – merge to `develop`
-- **Bugfix:** … – merge to `develop`
-- **Cleanup:** … – merge to `develop`
-- **Pipeline:** … – merge to `develop`
-- **Hotfix:** … – merge directly to `main`
-
-The pull request description must include a **Codex CI** section summarising the success or failure of each CI step (`install`, `build`, `typecheck`, `test`).
-
-## Commit messages
-
-Commits must follow conventional commit style to adhere to semantic versioning. Examples:
+Commits must use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). Examples:
 
 ```
 feat: add dark mode toggle
@@ -38,13 +32,21 @@ fix: handle null todo values
 chore: update dependencies
 ```
 
-Commit messages that do not match this format will fail the commit lint hook.
+## Pull Requests
 
-## CI dependencies
+Prefix PR titles to show intent:
 
-All dependencies required for tests, builds, and type checking must be installed via `npm ci` before executing CI jobs. GitHub Actions and Codex CI both rely on these dependencies.
+- **Feature:** … → merge into `develop`
+- **Bugfix:** … → merge into `develop`
+- **Cleanup:** … → merge into `develop`
+- **Pipeline:** … → merge into `develop`
+- **Hotfix:** … → merge directly to `main`
 
-## Super-Linter
+Include a **Codex CI** section summarising `install`, `build`, `typecheck`, and `test` results.
 
-This repository uses GitHub's Super-Linter to enforce code quality. The workflow file is located at `.github/workflows/super-linter.yml`. The linter runs on every pull request.
+After merging into `develop`, automatically open a PR that merges `develop` into `main` so changes can be tested against the main branch.
+
+## Continuous Integration
+
+All dependencies must be installed with `npm ci` in CI jobs. The Super-Linter runs on every pull request via `.github/workflows/super-linter.yml`.
 
