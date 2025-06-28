@@ -5,8 +5,13 @@ Todos are saved locally using `AsyncStorage` so they persist between sessions.
 
 ## Scripts
 
+- `npm ci` - install dependencies
+- `npm start` - start the Metro bundler
+- `npm run ios` - run the iOS app in the simulator
+- `npm run android` - run the Android app on a device or emulator
 - `npm test` - run the test suite
 - `npm run typecheck` - run TypeScript in strict mode
+- `npm run build` - build release artifacts for iOS and Android using Fastlane
 
 ## Continuous Deployment
 
