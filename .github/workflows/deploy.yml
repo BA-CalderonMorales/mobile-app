@@ -21,6 +21,5 @@ jobs:
       - run: |
           echo "Building Android app"
           # npx react-native build-android --variant=release
-      - run: |
-          echo "Deploying to App Stores"
-          # fastlane ios release && fastlane android release
+      - run: fastlane ios release
+      - run: fastlane android release

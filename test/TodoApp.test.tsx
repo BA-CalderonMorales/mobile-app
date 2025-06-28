@@ -1,5 +1,9 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
+
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);
 import { TodoApp } from '../src/TodoApp';
 
 describe('TodoApp', () => {
@@ -110,5 +114,29 @@ describe('TodoApp', () => {
 
     expect(getByText('Task 1')).toBeTruthy();
     expect(getByText('Task 2')).toBeTruthy();
+  });
+
+  it('persists todos between sessions', async () => {
+    jest.resetModules();
+    const mockAsyncStorage = require('@react-native-async-storage/async-storage');
+    mockAsyncStorage.getItem.mockResolvedValueOnce(null);
+
+    const { getByPlaceholderText, getByText, findByText, unmount, rerender } = render(
+      <TodoApp />
+    );
+
+    const input = getByPlaceholderText('Add new todo');
+    fireEvent.changeText(input, 'Persisted');
+    fireEvent(input, 'submitEditing');
+
+    expect(mockAsyncStorage.setItem).toHaveBeenCalled();
+    unmount();
+
+    mockAsyncStorage.getItem.mockResolvedValueOnce(
+      JSON.stringify([{ id: '1', text: 'Persisted', completed: false }])
+    );
+    rerender(<TodoApp />);
+
+    expect(await findByText('Persisted')).toBeTruthy();
   });
 });

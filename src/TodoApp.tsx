@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity } from 'react-native';
+import { loadTodos, saveTodos, StoredTodo } from './TodoStorage';
 
-type Todo = {
-  id: string;
-  text: string;
-  completed: boolean;
-};
+type Todo = StoredTodo;
 
 const createTodo = (text: string): Todo => ({
   id: Math.random().toString(36).slice(2),
@@ -19,6 +16,14 @@ export const TodoApp: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+
+  useEffect(() => {
+    loadTodos().then(setTodos);
+  }, []);
+
+  useEffect(() => {
+    saveTodos(todos);
+  }, [todos]);
 
   const handleAdd = () => {
     if (text.trim().length === 0) return;
