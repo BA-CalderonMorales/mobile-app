@@ -177,4 +177,22 @@ describe('TodoApp', () => {
     expect(item2.props.style.textDecorationLine).toBe('line-through');
     expect(getByText('0 items left')).toBeTruthy();
   });
+
+  it('clears all todos', () => {
+    const { getByPlaceholderText, getByText, queryByText } = render(<TodoApp />);
+
+    const input = getByPlaceholderText('Add new todo');
+    fireEvent.changeText(input, 'Task 1');
+    fireEvent(input, 'submitEditing');
+
+    fireEvent.changeText(input, 'Task 2');
+    fireEvent(input, 'submitEditing');
+
+    const clearAllButton = getByText('Clear All');
+    fireEvent.press(clearAllButton);
+
+    expect(queryByText('Task 1')).toBeNull();
+    expect(queryByText('Task 2')).toBeNull();
+    expect(getByText('0 items left')).toBeTruthy();
+  });
 });
