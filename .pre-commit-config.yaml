@@ -1,0 +1,14 @@
+repos:
+  - repo: local
+    hooks:
+      - id: npm-test
+        name: npm test
+        entry: npm
+        args: ['test']
+        language: system
+        pass_filenames: false
+      - id: commitlint
+        name: commitlint
+        entry: npx commitlint --edit $1
+        language: node
+        stages: [commit-msg]
