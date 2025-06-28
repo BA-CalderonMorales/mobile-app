@@ -1,4 +1,4 @@
-# Development Guidelines for Claude
+# Development Guidelines for All LLMs/agents
 
 ## Core Philosophy
 
