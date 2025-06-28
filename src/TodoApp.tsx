@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity } from 'react-native';
-import { loadTodos, saveTodos, StoredTodo } from './TodoStorage';
+import {
+  loadTodos,
+  saveTodos,
+  StoredTodo,
+  loadFilter,
+  saveFilter,
+} from './TodoStorage';
 
 type Todo = StoredTodo;
 
@@ -18,12 +24,20 @@ export const TodoApp: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
 
   useEffect(() => {
+    loadFilter().then(setFilter);
+  }, []);
+
+  useEffect(() => {
     loadTodos().then(setTodos);
   }, []);
 
   useEffect(() => {
     saveTodos(todos);
   }, [todos]);
+
+  useEffect(() => {
+    saveFilter(filter);
+  }, [filter]);
 
   const handleAdd = () => {
     if (text.trim().length === 0) return;

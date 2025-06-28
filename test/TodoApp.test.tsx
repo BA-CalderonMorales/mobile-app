@@ -195,4 +195,44 @@ describe('TodoApp', () => {
     expect(queryByText('Task 2')).toBeNull();
     expect(getByText('0 items left')).toBeTruthy();
   });
+
+  it('persists filter between sessions', async () => {
+    const mockAsyncStorage = require('@react-native-async-storage/async-storage');
+    mockAsyncStorage.getItem.mockResolvedValueOnce(null);
+
+    const { getByPlaceholderText, getByText, unmount } = render(<TodoApp />);
+
+    const input = getByPlaceholderText('Add new todo');
+    fireEvent.changeText(input, 'One');
+    fireEvent(input, 'submitEditing');
+
+    fireEvent.changeText(input, 'Two');
+    fireEvent(input, 'submitEditing');
+
+    const itemTwo = getByText('Two');
+    fireEvent.press(itemTwo); // complete second task
+
+    const completedFilter = getByText('Completed');
+    fireEvent.press(completedFilter);
+
+    expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
+      'filter',
+      'completed'
+    );
+    unmount();
+
+    mockAsyncStorage.getItem.mockResolvedValueOnce('completed');
+    mockAsyncStorage.getItem.mockResolvedValueOnce(
+      JSON.stringify([
+        { id: 'a', text: 'One', completed: false },
+        { id: 'b', text: 'Two', completed: true },
+      ])
+    );
+    const { queryByText: queryByTextAgain, findByText: findByTextAgain } = render(
+      <TodoApp />
+    );
+
+    expect(await findByTextAgain('Two')).toBeTruthy();
+    expect(queryByTextAgain('One')).toBeNull();
+  });
 });
