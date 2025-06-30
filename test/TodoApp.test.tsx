@@ -196,6 +196,23 @@ describe('TodoApp', () => {
     expect(getByText('0 items left')).toBeTruthy();
   });
 
+  it('filters todos by search text', () => {
+    const { getByPlaceholderText, getByText, queryByText } = render(<TodoApp />);
+
+    const input = getByPlaceholderText('Add new todo');
+    fireEvent.changeText(input, 'Buy milk');
+    fireEvent(input, 'submitEditing');
+
+    fireEvent.changeText(input, 'Walk dog');
+    fireEvent(input, 'submitEditing');
+
+    const searchInput = getByPlaceholderText('Search todos');
+    fireEvent.changeText(searchInput, 'milk');
+
+    expect(getByText('Buy milk')).toBeTruthy();
+    expect(queryByText('Walk dog')).toBeNull();
+  });
+
   it('persists filter between sessions', async () => {
     const mockAsyncStorage = require('@react-native-async-storage/async-storage');
     mockAsyncStorage.getItem.mockResolvedValueOnce(null);

@@ -19,6 +19,7 @@ const createTodo = (text: string): Todo => ({
 export const TodoApp: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [text, setText] = useState('');
+  const [search, setSearch] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
@@ -87,11 +88,15 @@ export const TodoApp: React.FC = () => {
     setEditText('');
   };
 
-  const filteredTodos = todos.filter((todo: Todo) => {
-    if (filter === 'active') return !todo.completed;
-    if (filter === 'completed') return todo.completed;
-    return true;
-  });
+  const filteredTodos = todos
+    .filter((todo: Todo) => {
+      if (filter === 'active') return !todo.completed;
+      if (filter === 'completed') return todo.completed;
+      return true;
+    })
+    .filter((todo: Todo) =>
+      todo.text.toLowerCase().includes(search.toLowerCase())
+    );
 
   return (
     <View>
@@ -100,6 +105,11 @@ export const TodoApp: React.FC = () => {
         value={text}
         onChangeText={setText}
         onSubmitEditing={handleAdd}
+      />
+      <TextInput
+        placeholder="Search todos"
+        value={search}
+        onChangeText={setSearch}
       />
       <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
         <TouchableOpacity onPress={() => setFilter('all')}>
