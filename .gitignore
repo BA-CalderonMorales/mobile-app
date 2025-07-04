@@ -36,3 +36,21 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# CI/CD secrets and credentials
+*.p8
+*.p12
+release.keystore
+keystore.properties
+google-services.json
+google-play-service-account.json
+.env
+.env.local
+.env.*.local
+
+# Fastlane
+fastlane/report.xml
+fastlane/test_output
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/metadata
