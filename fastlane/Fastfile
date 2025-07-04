@@ -1,17 +1,167 @@
 default_platform(:ios)
 
+# Fastfile for mobile app CI/CD
+# This file contains the lanes for building and deploying iOS and Android apps
+
 platform :ios do
   desc 'Build and upload to TestFlight'
   lane :release do
-    sh('echo Building iOS app')
-    sh('echo Uploading to TestFlight')
+    ensure_git_clean
+    increment_build_number(xcodeproj: "ios/TodoMobileApp.xcodeproj")
+    
+    # Install certificates and provisioning profiles using match
+    sync_code_signing(
+      type: "appstore",
+      readonly: true,
+      clone_branch_directly: true
+    )
+    
+    # Build the app
+    build_app(
+      workspace: "ios/TodoMobileApp.xcworkspace",
+      scheme: "TodoMobileApp",
+      configuration: "Release",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "com.example.todomobileapp" => "match AppStore com.example.todomobileapp"
+        }
+      }
+    )
+    
+    # Upload to TestFlight
+    upload_to_testflight(
+      api_key_path: "fastlane/AuthKey.p8",
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      changelog: "Automated build from CI/CD pipeline"
+    )
+    
+    # Clean up
+    cleanup_build_artifacts
+  end
+
+  desc 'Build for release (without upload)'
+  lane :build do
+    ensure_git_clean
+    increment_build_number(xcodeproj: "ios/TodoMobileApp.xcodeproj")
+    
+    sync_code_signing(
+      type: "appstore",
+      readonly: true,
+      clone_branch_directly: true
+    )
+    
+    build_app(
+      workspace: "ios/TodoMobileApp.xcworkspace",
+      scheme: "TodoMobileApp",
+      configuration: "Release",
+      export_method: "app-store"
+    )
+  end
+
+  desc 'Setup certificates and provisioning profiles'
+  lane :certificates do
+    sync_code_signing(type: "development")
+    sync_code_signing(type: "appstore")
   end
 end
 
 platform :android do
   desc 'Build and upload to Play Store'
   lane :release do
-    sh('echo Building Android app')
-    sh('echo Uploading to Play Store')
+    ensure_git_clean
+    
+    # Increment version code
+    increment_version_code(gradle_file_path: "android/app/build.gradle")
+    
+    # Build the app
+    gradle(
+      task: "clean bundleRelease",
+      project_dir: "android/",
+      properties: {
+        "android.injected.signing.store.file" => "release.keystore",
+        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"]
+      }
+    )
+    
+    # Upload to Play Store
+    upload_to_play_store(
+      json_key_data: ENV["GOOGLE_PLAY_JSON_KEY"],
+      track: "internal",
+      release_status: "draft",
+      aab: "android/app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+    
+    # Clean up
+    cleanup_build_artifacts
   end
+
+  desc 'Build for release (without upload)'
+  lane :build do
+    ensure_git_clean
+    
+    increment_version_code(gradle_file_path: "android/app/build.gradle")
+    
+    gradle(
+      task: "clean bundleRelease",
+      project_dir: "android/",
+      properties: {
+        "android.injected.signing.store.file" => "release.keystore",
+        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"]
+      }
+    )
+  end
+
+  desc 'Build APK for testing'
+  lane :build_apk do
+    gradle(
+      task: "clean assembleRelease",
+      project_dir: "android/"
+    )
+  end
+end
+
+# Cross-platform lanes
+desc 'Build both iOS and Android apps'
+lane :build_all do
+  ios_build
+  android_build
+end
+
+desc 'Deploy to both stores'
+lane :deploy_all do
+  ios_release
+  android_release
+end
+
+# Utility functions
+private_lane :ensure_git_clean do
+  ensure_git_status_clean
+end
+
+private_lane :cleanup_build_artifacts do
+  # Clean up any temporary files or artifacts
+  sh("rm -rf ../DerivedData || true")
+  sh("rm -rf ../android/app/build/outputs || true")
+end
+
+# Error handling
+error do |lane, exception|
+  # Clean up on error
+  cleanup_build_artifacts
+  
+  # You can add additional error handling here, such as:
+  # - Sending notifications to Slack
+  # - Creating GitHub issues
+  # - Rolling back version numbers
 end
