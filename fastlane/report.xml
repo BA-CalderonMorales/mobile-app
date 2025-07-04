@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000271692">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: echo Building iOS app" time="0.001983635">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: echo Uploading to TestFlight" time="0.026585774">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>
